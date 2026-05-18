@@ -27,13 +27,30 @@ export async function scoreRoutes(fastify: FastifyInstance) {
     }
   }, async (request: FastifyRequest<{ Querystring: ScoreQuery }>) => {
     if (request.query.positionId) {
-      return scoreService.findByPosition(parseInt(request.query.positionId));
+      const scores = await scoreService.findByPosition(parseInt(request.query.positionId));
+      return scores.map((score, index) => ({ ...score, rank: index + 1 }));
     }
     if (request.query.examNumber) {
       const score = await scoreService.findByExamNumber(request.query.examNumber);
       return score ? [score] : [];
     }
     return scoreService.findAll();
+  });
+
+  fastify.get('/position/:id', {
+    schema: {
+      tags: ['成绩'],
+      summary: '获取某个职位的所有成绩（含排名）',
+      params: {
+        type: 'object',
+        properties: {
+          id: { type: 'number' }
+        }
+      }
+    }
+  }, async (request: FastifyRequest<{ Params: ScoreParams }>) => {
+    const scores = await scoreService.findByPosition(parseInt(request.params.id));
+    return scores.map((score, index) => ({ ...score, rank: index + 1 }));
   });
 
   fastify.get('/:id', {
