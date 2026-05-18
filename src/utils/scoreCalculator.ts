@@ -5,14 +5,16 @@ export function calculateWrittenTotal(
   shenlunScore: number,
   formula: string,
 ): number {
+  const xingce = xingceScore ?? 0;
+  const shenlun = shenlunScore ?? 0;
   try {
     const result = evaluate(formula, {
-      xingce: xingceScore,
-      shenlun: shenlunScore,
+      xingce,
+      shenlun,
     });
     return Number(result.toFixed(2));
   } catch (error) {
-    return Number(((xingceScore + shenlunScore) / 2).toFixed(2));
+    return Number(((xingce + shenlun) / 2).toFixed(2));
   }
 }
 
