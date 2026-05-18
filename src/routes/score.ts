@@ -27,7 +27,8 @@ export async function scoreRoutes(fastify: FastifyInstance) {
     }
   }, async (request: FastifyRequest<{ Querystring: ScoreQuery }>) => {
     if (request.query.positionId) {
-      return scoreService.findByPosition(parseInt(request.query.positionId));
+      const scores = await scoreService.findByPosition(parseInt(request.query.positionId));
+      return scores.map((score, index) => ({ ...score, rank: index + 1 }));
     }
     if (request.query.examNumber) {
       const score = await scoreService.findByExamNumber(request.query.examNumber);
