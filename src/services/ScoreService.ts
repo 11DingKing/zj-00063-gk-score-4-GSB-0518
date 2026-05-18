@@ -43,6 +43,7 @@ export class ScoreService {
     return this.scoreRepository.find({
       where: { positionId },
       relations: ["position", "position.examSession"],
+      order: { totalScore: "DESC" },
     });
   }
 
@@ -54,9 +55,12 @@ export class ScoreService {
 
     if (!position) throw new Error("职位不存在");
 
+    const xingceScore = data.xingceScore ?? 0;
+    const shenlunScore = data.shenlunScore ?? 0;
+
     const writtenTotal = calculateWrittenTotal(
-      data.xingceScore!,
-      data.shenlunScore!,
+      xingceScore,
+      shenlunScore,
       position.examSession.totalScoreFormula,
     );
 
